@@ -1,55 +1,70 @@
 body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f9f9f9;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f4f7f8;
+  color: #333;
+  margin: 0;
+  padding: 0;
 }
 
 h1 {
   text-align: center;
+  padding: 1.5rem 0 0.5rem;
+  color: #2c3e50;
+}
+
+#root {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .episode-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center;
-  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .episode-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .episode-card {
-  background-color: white;
-  border: 1px solid #ddd;
+  background-color: #ffffff;
+  border: 2px solid #cdddf3;
   border-radius: 10px;
-  padding: 15px;
-  width: 300px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
 }
 
-.episode-card img {
-  width: 100%;
-  height: auto;
-  border-radius: 6px;
+.episode-card:hover {
+  transform: scale(1.02);
+  border-color: #3b82f6;
 }
 
 .episode-title {
-  font-size: 18px;
-  margin: 10px 0 5px;
+  font-size: 1.2rem;
+  color: #1f2937;
+  margin: 0.5rem 0;
 }
 
 .episode-code {
   font-weight: bold;
-  color: #444;
+  color: #6b7280;
 }
 
 .episode-summary {
-  font-size: 14px;
-  margin: 10px 0;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #374151;
 }
 
 .episode-link {
   display: inline-block;
-  margin-top: 8px;
-  color: #007acc;
+  margin-top: 0.75rem;
+  color: #2563eb;
   text-decoration: none;
 }
 
