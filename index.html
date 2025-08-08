@@ -9,31 +9,32 @@
 
 <body>
 
-  <!-- Search input and episode selector dropdown -->
-  <label for="searchInput">Search episodes:</label>
-  <input type="text" id="searchInput" placeholder="Search episodes..." />
+  <!-- Controls: dropdown + input + match count (in one row) -->
+  <div id="controls">
+    <select id="episodeSelect">
+      <option value="all">All episodes</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="Search episodes..." />
+    <p id="matchCount"></p>
+  </div>
 
-  <label for="episodeSelect">Jump to episode:</label>
-  <select id="episodeSelect">
-    <option value="all">All episodes</option>
-  </select>
-
-  <p id="matchCount"></p> <!-- To show how many episodes match -->
   <div id="root"></div>
 
   <!-- Template for episode cards -->
-  <template id="episode-card-template">
-    <section class="episode-card">
-      <img src="" alt="" />
-      <h2 class="episode-title"></h2>
-      <p class="episode-code"></p>
-      <div class="episode-summary"></div>
-      <a class="episode-link" target="_blank" rel="noopener noreferrer">View on TVMaze</a>
-    </section>
-  </template>
+<template id="episode-card-template">
+  <section class="episode-card">
+    <div class="episode-title-bar">
+      <div class="episode-title"></div>
+    </div>
+    <img src="" alt="" />
+    <div class="episode-summary"></div>
+    <a class="episode-link" target="_blank" rel="noopener noreferrer">View on TVMaze</a>
+  </section>
+</template>
 
-  <script src="episodes.js"></script> <!-- Your episode data source -->
-  <script src="script.js"></script> <!-- Your main script -->
+  
+  <script src="episodes.js"></script>
+  <script src="script.js"></script>
 </body>
 
 </html>
