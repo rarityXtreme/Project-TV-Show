@@ -14,13 +14,19 @@
   min-width: 200px;
 }
 
+#controls select:focus,
+#controls input:focus {
+  outline: 3px solid #2563eb;
+  /* Blue focus */
+  outline-offset: 2px;
+}
+
 #matchCount {
   margin: 0;
   font-weight: bold;
   color: #333;
 }
 
-/* Keep the 3 per row layout */
 .episode-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -38,13 +44,13 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
-  margin: 1rem;
   background-color: white;
   max-width: 300px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .episode-title-bar {
-  background-color: #e5e7eb; /* Light grey bar */
+  background-color: #e5e7eb;
   padding: 0.5rem 1rem;
 }
 
@@ -58,11 +64,6 @@
   font-size: 1rem;
   color: #111827;
   text-align: center;
-}
-
-.episode-code {
-  font-weight: bold;
-  color: #6b7280;
 }
 
 .episode-card img {
@@ -86,5 +87,14 @@
 }
 
 .episode-link:hover {
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
 }

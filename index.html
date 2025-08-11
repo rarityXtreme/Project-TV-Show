@@ -3,37 +3,40 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TV Show Project | Hendrine Zeraua (rarityXtreme)</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 </head>
 
 <body>
 
-  <!-- Controls: dropdown + input + match count (in one row) -->
   <div id="controls">
+    <label for="episodeSelect" class="visually-hidden">Jump to episode</label>
     <select id="episodeSelect">
       <option value="all">All episodes</option>
     </select>
+
+    <label for="searchInput" class="visually-hidden">Search episodes</label>
     <input type="text" id="searchInput" placeholder="Search episodes..." />
-    <p id="matchCount"></p>
+
+    <p id="matchCount" aria-live="polite"></p>
   </div>
 
-  <div id="root"></div>
+ 
+  <div id="root" class="episode-container"></div>
 
-  <!-- Template for episode cards -->
-<template id="episode-card-template">
-  <section class="episode-card">
-    <div class="episode-title-bar">
-      <div class="episode-title"></div>
-    </div>
-    <img src="" alt="" />
-    <div class="episode-summary"></div>
-    <a class="episode-link" target="_blank" rel="noopener noreferrer">View on TVMaze</a>
-  </section>
-</template>
+  <template id="episode-card-template">
+    <section class="episode-card">
+      <div class="episode-title-bar">
+        <div class="episode-title"></div>
+      </div>
+      <img src="" alt="" />
+      <div class="episode-summary"></div>
+      <a class="episode-link" target="_blank" rel="noopener noreferrer">View on TVMaze</a>
+    </section>
+  </template>
 
-  
-  <script src="episodes.js"></script>
   <script src="script.js"></script>
 </body>
 
