@@ -1,56 +1,66 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: #f9fafb;
+}
+
 #controls {
+  padding: 1rem 2rem;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+}
+
+.control-row {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1.5rem 2rem 0;
+  gap: 0.5rem;
   flex-wrap: wrap;
-  max-width: 100%;
 }
 
 #controls select,
 #controls input {
-  padding: 0.5rem;
-  font-size: 1rem;
-  min-width: 200px;
+  padding: 0.4rem;
+  font-size: 0.9rem;
+  width: 160px; /* Reduced width */
 }
 
 #matchCount {
-  margin: 0;
+  font-size: 0.9rem;
   font-weight: bold;
   color: #333;
+  white-space: nowrap;
 }
 
-/* Keep the 3 per row layout */
+#controls select:focus,
+#controls input:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Lock episodes to exactly 3 per row */
 .episode-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  padding: 2rem;
-}
-
-@media (max-width: 768px) {
-  .episode-container {
-    grid-template-columns: 1fr;
-  }
+  gap: 1rem;
+  padding: 1rem 2rem;
 }
 
 .episode-card {
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow: hidden;
-  margin: 1rem;
   background-color: white;
-  max-width: 300px;
-}
-
-.episode-title-bar {
-  background-color: #e5e7eb; /* Light grey bar */
-  padding: 0.5rem 1rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .episode-card:hover {
   transform: scale(1.02);
   border-color: #3b82f6;
+}
+
+.episode-title-bar {
+  background-color: #e5e7eb;
+  padding: 0.5rem 1rem;
 }
 
 .episode-title {
@@ -60,15 +70,9 @@
   text-align: center;
 }
 
-.episode-code {
-  font-weight: bold;
-  color: #6b7280;
-}
-
 .episode-card img {
   display: block;
-  margin: 0 auto;
-  max-width: 100%;
+  width: 100%;
   height: auto;
 }
 
@@ -86,5 +90,15 @@
 }
 
 .episode-link:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
+
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
