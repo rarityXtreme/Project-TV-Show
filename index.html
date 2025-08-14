@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TV Show Project | Hendrine Zeraua (rarityXtreme)</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 </head>
-
 <body>
-
   <div id="controls">
-    <label for="episodeSelect" class="visually-hidden">Jump to episode</label>
-    <select id="episodeSelect">
-      <option value="all">All episodes</option>
-    </select>
+    <div class="control-row">
+      <label for="showSelect" class="visually-hidden">Choose a show</label>
+      <select id="showSelect"></select>
 
-    <label for="searchInput" class="visually-hidden">Search episodes</label>
-    <input type="text" id="searchInput" placeholder="Search episodes..." />
+      <label for="episodeSelect" class="visually-hidden">Jump to episode</label>
+      <select id="episodeSelect">
+        <option value="all">All episodes</option>
+      </select>
 
-    <p id="matchCount" aria-live="polite"></p>
+      <label for="searchInput" class="visually-hidden">Search episodes</label>
+      <input type="text" id="searchInput" placeholder="Search episodes..." />
+
+      <p id="matchCount" aria-live="polite"></p>
+    </div>
   </div>
 
- 
   <div id="root" class="episode-container"></div>
 
   <template id="episode-card-template">
@@ -39,5 +39,5 @@
 
   <script src="script.js"></script>
 </body>
-
 </html>
+
