@@ -11,11 +11,9 @@
 <body>
   <div id="controls">
     <div class="control-row">
-      
       <label for="showSearchInput" class="visually-hidden">Search shows</label>
-      <input type="text" id="showSearchInput" placeholder="Search shows..." />
+      <input type="text" id="showSearchInput" placeholder="Search shows..." aria-label="Search shows" />
 
-    
       <label for="showSelect" class="visually-hidden">Choose a show</label>
       <select id="showSelect" style="display:none;"></select>
 
@@ -31,14 +29,16 @@
     </div>
   </div>
 
-  
-  <button id="backToShows" style="display:none;">← Back to Shows</button>
+  <button id="backToShows" type="button" style="display:none;">← Back to Shows</button>
 
-  
-  <div id="showsContainer" class="shows-grid" aria-live="polite"></div>
+ 
+  <h1 id="showsHeading" class="visually-hidden">Shows</h1>
+  <h1 id="episodesHeading" class="visually-hidden">Episodes</h1>
 
+  <div id="showsContainer" class="shows-grid" aria-labelledby="showsHeading" tabindex="-1" aria-live="polite"></div>
 
-  <div id="root" class="episode-container" style="display:none;"></div>
+ 
+  <div id="root" class="episode-container" aria-labelledby="episodesHeading" tabindex="-1"></div>
 
   <template id="episode-card-template">
     <section class="episode-card">
@@ -55,6 +55,7 @@
 </body>
 
 </html>
+
 
 
 

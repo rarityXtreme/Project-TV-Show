@@ -63,7 +63,6 @@ async function loadEpisodesForShow(showId) {
 }
 
 
-
 function setupEventListeners() {
   
   const showSelect = document.getElementById("showSelect");
@@ -75,7 +74,7 @@ function setupEventListeners() {
     });
   }
 
-  
+ 
   document.getElementById("searchInput").addEventListener("input", e => {
     const term = e.target.value.trim().toLowerCase();
     const filtered = term
@@ -91,7 +90,7 @@ function setupEventListeners() {
     document.getElementById("episodeSelect").value = "all";
   });
 
- 
+  
   document.getElementById("episodeSelect").addEventListener("change", e => {
     const selectedId = e.target.value;
     if (selectedId === "all") {
@@ -105,10 +104,9 @@ function setupEventListeners() {
     document.getElementById("searchInput").value = "";
   });
 
- 
+  
   document.getElementById("backToShows")?.addEventListener("click", showShowsView);
 }
-
 
 function setupShowSearchListener() {
   const input = document.getElementById("showSearchInput");
@@ -137,7 +135,6 @@ function setupShowSearchListener() {
 }
 
 
-
 function renderShowsList(shows) {
   const showsEl = document.getElementById("showsContainer");
   const episodesEl = document.getElementById("root");
@@ -160,6 +157,8 @@ function renderShowsList(shows) {
 
     const card = document.createElement("section");
     card.className = "episode-card";
+    card.setAttribute("role", "button");   
+    card.tabIndex = 0;                     
     card.innerHTML = `
       <div class="episode-title-bar">
         <div class="episode-title">${show.name}</div>
@@ -172,11 +171,22 @@ function renderShowsList(shows) {
       <p><strong>Runtime:</strong> ${runtime} min</p>
     `;
 
-  
+    
     card.addEventListener("click", () => showEpisodesView(show.id));
+
+   
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        showEpisodesView(show.id);
+      }
+    });
 
     showsEl.appendChild(card);
   });
+
+  
+  showsEl.focus();
 }
 
 async function showEpisodesView(showId) {
@@ -196,6 +206,9 @@ async function showEpisodesView(showId) {
   } catch {
     showError("Failed to load episodes. Please try again.");
   }
+
+  
+  episodesEl.focus();
 }
 
 function showShowsView() {
@@ -208,9 +221,12 @@ function showShowsView() {
   if (backBtn) backBtn.style.display = "none";
   showsEl.style.display = "grid";
 
- 
+
   document.getElementById("searchInput").value = "";
   document.getElementById("episodeSelect").value = "all";
+
+
+  showsEl.focus();
 }
 
 function renderEpisodes(episodeList) {
@@ -250,7 +266,7 @@ function populateEpisodeSelect(episodes) {
   });
 }
 
-/
+
 
 function resetFilters() {
   document.getElementById("searchInput").value = "";
@@ -270,7 +286,7 @@ function showLoading() {
   const shows = document.getElementById("showsContainer");
   const episodes = document.getElementById("root");
 
- 
+  
   if (episodes) episodes.style.display = "none";
   if (shows) {
     shows.style.display = "grid";
@@ -282,6 +298,7 @@ function showError(message) {
   const shows = document.getElementById("showsContainer");
   const episodes = document.getElementById("root");
 
+  
   if (getComputedStyle(shows).display !== "none") {
     shows.innerHTML = `<p role="alert" style="color:#b91c1c; font-weight:bold;">${message}</p>`;
     return;
@@ -289,3 +306,4 @@ function showError(message) {
   episodes.style.display = "";
   episodes.innerHTML = `<p role="alert" style="color:#b91c1c; font-weight:bold;">${message}</p>`;
 }
+
