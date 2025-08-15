@@ -10,8 +10,7 @@ async function setup() {
   try {
     await fetchShows();
     setupEventListeners();
-    const firstShowId = document.getElementById("showSelect").value;
-    await loadEpisodesForShow(firstShowId);
+    renderShowsList(showsCache); 
   } catch (error) {
     showError("Failed to load shows. Please try again later.");
   }
@@ -31,6 +30,7 @@ async function fetchShows() {
   }
 
   const showSelect = document.getElementById("showSelect");
+  showSelect.innerHTML = ""; // <- clear before adding options
   showsCache.forEach(show => {
     const option = document.createElement("option");
     option.value = show.id;
@@ -90,6 +90,30 @@ function setupEventListeners() {
   });
 }
 
+function renderShowsList(shows) {
+  const container = document.getElementById("showsContainer");
+  container.innerHTML = "";
+  document.getElementById("root").style.display = "none"; // hide episodes
+  container.style.display = "grid"; // show grid
+
+  shows.forEach(show => {
+    const card = document.createElement("section");
+    card.className = "episode-card"; // reuse same styling
+    card.innerHTML = `
+      <div class="episode-title-bar">
+        <div class="episode-title">${show.name}</div>
+      </div>
+      <img src="${show.image?.medium || FALLBACK_IMAGE}" alt="${show.name}">
+      <div class="episode-summary">${show.summary || "No summary available."}</div>
+      <p><strong>Genres:</strong> ${show.genres.join(", ")}</p>
+      <p><strong>Status:</strong> ${show.status}</p>
+      <p><strong>Rating:</strong> ${show.rating?.average || "N/A"}</p>
+      <p><strong>Runtime:</strong> ${show.runtime || "N/A"}</p>
+    `;
+    container.appendChild(card);
+  });
+}
+
 function resetFilters() {
   document.getElementById("searchInput").value = "";
   document.getElementById("episodeSelect").value = "all";
@@ -141,8 +165,15 @@ function updateCount(displayed, total) {
 }
 
 function showLoading() {
-  const container = document.getElementById("root");
-  container.innerHTML = `<p role="status" aria-live="polite" style="font-weight: bold;">Loading...</p>`;
+  const shows = document.getElementById("showsContainer");
+  const episodes = document.getElementById("root");
+
+  
+  if (episodes) episodes.style.display = "none";
+  if (shows) {
+    shows.style.display = "grid";
+    shows.innerHTML = `<p role="status" aria-live="polite" style="font-weight:bold;">Loading shows…</p>`;
+  }
 }
 
 function showError(message) {
