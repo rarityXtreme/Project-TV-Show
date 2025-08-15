@@ -15,6 +15,7 @@
       <label for="showSearchInput" class="visually-hidden">Search shows</label>
       <input type="text" id="showSearchInput" placeholder="Search shows..." />
 
+    
       <label for="showSelect" class="visually-hidden">Choose a show</label>
       <select id="showSelect" style="display:none;"></select>
 
@@ -36,7 +37,8 @@
   
   <div id="showsContainer" class="shows-grid" aria-live="polite"></div>
 
-  <div id="root" class="episode-container"></div>
+
+  <div id="root" class="episode-container" style="display:none;"></div>
 
   <template id="episode-card-template">
     <section class="episode-card">
@@ -53,5 +55,6 @@
 </body>
 
 </html>
+
 
 

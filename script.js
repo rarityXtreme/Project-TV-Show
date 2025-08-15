@@ -6,17 +6,18 @@ const FALLBACK_IMAGE = "https://via.placeholder.com/250x140?text=No+Image";
 window.onload = setup;
 
 async function setup() {
-  showLoading();
+  showLoading(); 
+
   try {
-    await fetchShows();
-    setupEventListeners();
-    renderShowsList(showsCache); 
-    
-    document.getElementById("backToShows")?.addEventListener("click", showShowsView);
+    await fetchShows();            
+    setupEventListeners();         
+    setupShowSearchListener();     
+    renderShowsList(showsCache);   
   } catch (error) {
     showError("Failed to load shows. Please try again later.");
   }
 }
+
 
 async function fetchShows() {
   const cached = localStorage.getItem("shows");
@@ -27,22 +28,23 @@ async function fetchShows() {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const shows = await response.json();
-    showsCache = shows.sort((a, b) => a.name.localeCompare(b.name));
+    showsCache = shows.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
     localStorage.setItem("shows", JSON.stringify(showsCache));
   }
 
   const showSelect = document.getElementById("showSelect");
-  showSelect.innerHTML = "";
-  showsCache.forEach(show => {
-    const option = document.createElement("option");
-    option.value = show.id;
-    option.textContent = show.name;
-    showSelect.appendChild(option);
-  });
+  if (showSelect) {
+    showSelect.innerHTML = "";
+    showsCache.forEach(show => {
+      const option = document.createElement("option");
+      option.value = show.id;
+      option.textContent = show.name;
+      showSelect.appendChild(option);
+    });
+  }
 }
 
 async function loadEpisodesForShow(showId) {
-  
   if (episodesCache[showId]) {
     allEpisodes = episodesCache[showId];
   } else {
@@ -50,7 +52,7 @@ async function loadEpisodesForShow(showId) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const episodes = await response.json();
-    episodesCache[showId] = episodes;
+    episodesCache[showId] = episodes; 
     allEpisodes = episodes;
   }
   populateEpisodeSelect(allEpisodes);
@@ -58,26 +60,35 @@ async function loadEpisodesForShow(showId) {
   updateCount(allEpisodes.length, allEpisodes.length);
 }
 
+
+
 function setupEventListeners() {
-  document.getElementById("showSelect").addEventListener("change", async e => {
-    resetFilters();
-    await loadEpisodesForShow(e.target.value);
-  });
+  
+  const showSelect = document.getElementById("showSelect");
+  if (showSelect) {
+    showSelect.addEventListener("change", async e => {
+      resetFilters();
+      await loadEpisodesForShow(e.target.value);
+      showEpisodesView(e.target.value);
+    });
+  }
 
   document.getElementById("searchInput").addEventListener("input", e => {
     const term = e.target.value.trim().toLowerCase();
     const filtered = term
       ? allEpisodes.filter(ep =>
           ep.name.toLowerCase().includes(term) ||
-          ep.summary?.toLowerCase().includes(term) ||
+          (ep.summary || "").toLowerCase().includes(term) ||
           formatEpisodeCode(ep.season, ep.number).toLowerCase().includes(term)
         )
       : allEpisodes;
+
     renderEpisodes(filtered);
     updateCount(filtered.length, allEpisodes.length);
     document.getElementById("episodeSelect").value = "all";
   });
 
+  
   document.getElementById("episodeSelect").addEventListener("change", e => {
     const selectedId = e.target.value;
     if (selectedId === "all") {
@@ -90,88 +101,107 @@ function setupEventListeners() {
     }
     document.getElementById("searchInput").value = "";
   });
+
+ 
+  document.getElementById("backToShows")?.addEventListener("click", showShowsView);
 }
 
 
+function setupShowSearchListener() {
+  const input = document.getElementById("showSearchInput");
+  if (!input) return;
+
+  input.addEventListener("input", () => {
+    
+    const episodesVisible = getComputedStyle(document.getElementById("root")).display !== "none";
+    if (episodesVisible) showShowsView();
+
+    const term = input.value.trim().toLowerCase();
+    if (!term) {
+      renderShowsList(showsCache);
+      return;
+    }
+
+    const filtered = showsCache.filter(show => {
+      const name = (show.name || "").toLowerCase();
+      const genres = (show.genres || []).join(" ").toLowerCase();
+      const summaryText = (show.summary || "").replace(/<[^>]*>/g, "").toLowerCase();
+      return name.includes(term) || genres.includes(term) || summaryText.includes(term);
+    });
+
+    renderShowsList(filtered);
+  });
+}
+
 
 function renderShowsList(shows) {
-  const showsContainer = document.getElementById("showsContainer");
-  const episodesContainer = document.getElementById("root");
+  const showsEl = document.getElementById("showsContainer");
+  const episodesEl = document.getElementById("root");
   const backBtn = document.getElementById("backToShows");
 
-  showsContainer.innerHTML = "";
-  episodesContainer.style.display = "none";   
-  showsContainer.style.display = "grid";      
+  showsEl.style.display = "grid";
+  episodesEl.style.display = "none";
   if (backBtn) backBtn.style.display = "none";
 
-  shows.forEach(show => {
-    const card = document.createElement("section");
-    card.className = "episode-card";
+  showsEl.innerHTML = "";
 
-    const imgSrc = show.image?.medium || FALLBACK_IMAGE;
-    const summaryText = (show.summary || "No summary available.").replace(/<\/?[^>]+(>|$)/g, "");
-    const genres = Array.isArray(show.genres) && show.genres.length ? show.genres.join(", ") : "—";
-    const status = show.status || "—";
+  shows.forEach(show => {
+    const cleanSummary = (show.summary || "No summary available.").replace(/<[^>]*>/g, "");
+    const genres = (show.genres || []).join(", ");
+    const status = show.status || "N/A";
     const rating = show.rating?.average ?? "N/A";
     const runtime = show.runtime ?? "N/A";
+    const imgSrc = show.image?.medium || FALLBACK_IMAGE;
 
+    const card = document.createElement("section");
+    card.className = "episode-card";
     card.innerHTML = `
       <div class="episode-title-bar">
         <div class="episode-title">${show.name}</div>
       </div>
       <img src="${imgSrc}" alt="${show.name}">
-      <div class="episode-summary">${summaryText}</div>
+      <div class="episode-summary">${cleanSummary}</div>
       <p><strong>Genres:</strong> ${genres}</p>
       <p><strong>Status:</strong> ${status}</p>
       <p><strong>Rating:</strong> ${rating}</p>
-      <p><strong>Runtime:</strong> ${runtime}</p>
+      <p><strong>Runtime:</strong> ${runtime} min</p>
     `;
 
-    
     card.addEventListener("click", () => showEpisodesView(show.id));
 
-    showsContainer.appendChild(card);
+    showsEl.appendChild(card);
   });
 }
 
 async function showEpisodesView(showId) {
-  const showsContainer = document.getElementById("showsContainer");
-  const episodesContainer = document.getElementById("root");
+  const showsEl = document.getElementById("showsContainer");
+  const episodesEl = document.getElementById("root");
   const backBtn = document.getElementById("backToShows");
 
-  
-  showsContainer.style.display = "none";
-  episodesContainer.style.display = "grid";
+  showsEl.style.display = "none";
+  episodesEl.style.display = "grid";
   if (backBtn) backBtn.style.display = "inline-block";
 
-  
   resetFilters();
-  episodesContainer.innerHTML = `<p role="status" aria-live="polite" style="font-weight:bold;">Loading episodes…</p>`;
+  episodesEl.innerHTML = `<p role="status" aria-live="polite" style="font-weight:bold;">Loading episodes…</p>`;
 
   try {
     await loadEpisodesForShow(showId);
-  } catch (e) {
+  } catch {
     showError("Failed to load episodes. Please try again.");
   }
 }
 
 function showShowsView() {
-  const showsContainer = document.getElementById("showsContainer");
-  const episodesContainer = document.getElementById("root");
+  const showsEl = document.getElementById("showsContainer");
+  const episodesEl = document.getElementById("root");
   const backBtn = document.getElementById("backToShows");
 
-  episodesContainer.style.display = "none";
+  episodesEl.style.display = "none";
   if (backBtn) backBtn.style.display = "none";
-  showsContainer.style.display = "grid";
+  showsEl.style.display = "grid";
 
   resetFilters();
-}
-
-
-
-function resetFilters() {
-  document.getElementById("searchInput").value = "";
-  document.getElementById("episodeSelect").value = "all";
 }
 
 function renderEpisodes(episodeList) {
@@ -211,19 +241,27 @@ function populateEpisodeSelect(episodes) {
   });
 }
 
+
+
+function resetFilters() {
+  document.getElementById("searchInput").value = "";
+  document.getElementById("episodeSelect").value = "all";
+}
+
 function formatEpisodeCode(season, number) {
   return `S${String(season).padStart(2, "0")}E${String(number).padStart(2, "0")}`;
 }
 
 function updateCount(displayed, total) {
-  document.getElementById("matchCount").textContent = `Displaying ${displayed} / ${total} episodes`;
+  const el = document.getElementById("matchCount");
+  if (el) el.textContent = `Displaying ${displayed} / ${total} episodes`;
 }
 
 function showLoading() {
   const shows = document.getElementById("showsContainer");
   const episodes = document.getElementById("root");
 
-  
+
   if (episodes) episodes.style.display = "none";
   if (shows) {
     shows.style.display = "grid";
@@ -240,8 +278,6 @@ function showError(message) {
     shows.innerHTML = `<p role="alert" style="color:#b91c1c; font-weight:bold;">${message}</p>`;
     return;
   }
-
-  
   episodes.style.display = "";
   episodes.innerHTML = `<p role="alert" style="color:#b91c1c; font-weight:bold;">${message}</p>`;
 }
