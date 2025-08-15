@@ -6,19 +6,19 @@ const FALLBACK_IMAGE = "https://via.placeholder.com/250x140?text=No+Image";
 window.onload = setup;
 
 async function setup() {
-  showLoading(); // show loading in shows grid
+  showLoading(); 
 
   try {
-    await fetchShows();            // cache shows in localStorage (once per visit)
-    setupEventListeners();         // episode search + dropdown + back button + (optional) showSelect
-    setupShowSearchListener();     // 🔍 shows free-text search
-    renderShowsList(showsCache);   // start on shows listing
+    await fetchShows();            
+    setupEventListeners();         
+    setupShowSearchListener();     
+    renderShowsList(showsCache);   
   } catch (error) {
     showError("Failed to load shows. Please try again later.");
   }
 }
 
-/* -------------------- Data fetching (cached) -------------------- */
+
 
 async function fetchShows() {
   const cached = localStorage.getItem("shows");
@@ -33,7 +33,7 @@ async function fetchShows() {
     localStorage.setItem("shows", JSON.stringify(showsCache));
   }
 
-  // keep showSelect populated (even if hidden)
+  
   const showSelect = document.getElementById("showSelect");
   if (showSelect) {
     showSelect.innerHTML = "";
@@ -54,7 +54,7 @@ async function loadEpisodesForShow(showId) {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const episodes = await response.json();
-    episodesCache[showId] = episodes; // avoid refetch within this visit
+    episodesCache[showId] = episodes; 
     allEpisodes = episodes;
   }
   populateEpisodeSelect(allEpisodes);
@@ -62,10 +62,10 @@ async function loadEpisodesForShow(showId) {
   updateCount(allEpisodes.length, allEpisodes.length);
 }
 
-/* -------------------- Event listeners -------------------- */
+
 
 function setupEventListeners() {
-  // optional hidden showSelect flow
+  
   const showSelect = document.getElementById("showSelect");
   if (showSelect) {
     showSelect.addEventListener("change", async e => {
@@ -75,7 +75,7 @@ function setupEventListeners() {
     });
   }
 
-  // Episode live search (episodes view)
+  
   document.getElementById("searchInput").addEventListener("input", e => {
     const term = e.target.value.trim().toLowerCase();
     const filtered = term
@@ -91,7 +91,7 @@ function setupEventListeners() {
     document.getElementById("episodeSelect").value = "all";
   });
 
-  // Episode dropdown (episodes view)
+ 
   document.getElementById("episodeSelect").addEventListener("change", e => {
     const selectedId = e.target.value;
     if (selectedId === "all") {
@@ -105,17 +105,17 @@ function setupEventListeners() {
     document.getElementById("searchInput").value = "";
   });
 
-  // Back to shows
+ 
   document.getElementById("backToShows")?.addEventListener("click", showShowsView);
 }
 
-// 🔍 Free-text search over shows (name, genres, summary)
+
 function setupShowSearchListener() {
   const input = document.getElementById("showSearchInput");
   if (!input) return;
 
   input.addEventListener("input", () => {
-    // If user is in episodes view, return to shows while searching
+    
     const episodesVisible = getComputedStyle(document.getElementById("root")).display !== "none";
     if (episodesVisible) showShowsView();
 
@@ -136,14 +136,14 @@ function setupShowSearchListener() {
   });
 }
 
-/* -------------------- Shows list / Episodes view -------------------- */
+
 
 function renderShowsList(shows) {
   const showsEl = document.getElementById("showsContainer");
   const episodesEl = document.getElementById("root");
   const backBtn = document.getElementById("backToShows");
 
-  // show shows, hide episodes + back button
+  
   showsEl.style.display = "grid";
   episodesEl.style.display = "none";
   if (backBtn) backBtn.style.display = "none";
@@ -172,7 +172,7 @@ function renderShowsList(shows) {
       <p><strong>Runtime:</strong> ${runtime} min</p>
     `;
 
-    // open episodes view on click
+  
     card.addEventListener("click", () => showEpisodesView(show.id));
 
     showsEl.appendChild(card);
@@ -203,17 +203,15 @@ function showShowsView() {
   const episodesEl = document.getElementById("root");
   const backBtn = document.getElementById("backToShows");
 
-  // switch views
+ 
   episodesEl.style.display = "none";
   if (backBtn) backBtn.style.display = "none";
   showsEl.style.display = "grid";
 
-  // 🔄 Reset episode filters so controls are clear next time
+ 
   document.getElementById("searchInput").value = "";
   document.getElementById("episodeSelect").value = "all";
 }
-
-/* -------------------- Episodes rendering -------------------- */
 
 function renderEpisodes(episodeList) {
   const container = document.getElementById("root");
@@ -252,7 +250,7 @@ function populateEpisodeSelect(episodes) {
   });
 }
 
-/* -------------------- Helpers -------------------- */
+/
 
 function resetFilters() {
   document.getElementById("searchInput").value = "";
@@ -272,7 +270,7 @@ function showLoading() {
   const shows = document.getElementById("showsContainer");
   const episodes = document.getElementById("root");
 
-  // show loading in shows grid by default
+ 
   if (episodes) episodes.style.display = "none";
   if (shows) {
     shows.style.display = "grid";
@@ -284,7 +282,6 @@ function showError(message) {
   const shows = document.getElementById("showsContainer");
   const episodes = document.getElementById("root");
 
-  // render error in whichever view is currently visible
   if (getComputedStyle(shows).display !== "none") {
     shows.innerHTML = `<p role="alert" style="color:#b91c1c; font-weight:bold;">${message}</p>`;
     return;
