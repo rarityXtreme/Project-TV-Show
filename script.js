@@ -11,6 +11,8 @@ async function setup() {
     await fetchShows();
     setupEventListeners();
     renderShowsList(showsCache); 
+    
+    document.getElementById("backToShows")?.addEventListener("click", showShowsView);
   } catch (error) {
     showError("Failed to load shows. Please try again later.");
   }
@@ -30,7 +32,7 @@ async function fetchShows() {
   }
 
   const showSelect = document.getElementById("showSelect");
-  showSelect.innerHTML = ""; // <- clear before adding options
+  showSelect.innerHTML = "";
   showsCache.forEach(show => {
     const option = document.createElement("option");
     option.value = show.id;
@@ -40,7 +42,7 @@ async function fetchShows() {
 }
 
 async function loadEpisodesForShow(showId) {
-  showLoading();
+  
   if (episodesCache[showId]) {
     allEpisodes = episodesCache[showId];
   } else {
@@ -90,29 +92,82 @@ function setupEventListeners() {
   });
 }
 
+
+
 function renderShowsList(shows) {
-  const container = document.getElementById("showsContainer");
-  container.innerHTML = "";
-  document.getElementById("root").style.display = "none"; // hide episodes
-  container.style.display = "grid"; // show grid
+  const showsContainer = document.getElementById("showsContainer");
+  const episodesContainer = document.getElementById("root");
+  const backBtn = document.getElementById("backToShows");
+
+  showsContainer.innerHTML = "";
+  episodesContainer.style.display = "none";   
+  showsContainer.style.display = "grid";      
+  if (backBtn) backBtn.style.display = "none";
 
   shows.forEach(show => {
     const card = document.createElement("section");
-    card.className = "episode-card"; // reuse same styling
+    card.className = "episode-card";
+
+    const imgSrc = show.image?.medium || FALLBACK_IMAGE;
+    const summaryText = (show.summary || "No summary available.").replace(/<\/?[^>]+(>|$)/g, "");
+    const genres = Array.isArray(show.genres) && show.genres.length ? show.genres.join(", ") : "—";
+    const status = show.status || "—";
+    const rating = show.rating?.average ?? "N/A";
+    const runtime = show.runtime ?? "N/A";
+
     card.innerHTML = `
       <div class="episode-title-bar">
         <div class="episode-title">${show.name}</div>
       </div>
-      <img src="${show.image?.medium || FALLBACK_IMAGE}" alt="${show.name}">
-      <div class="episode-summary">${show.summary || "No summary available."}</div>
-      <p><strong>Genres:</strong> ${show.genres.join(", ")}</p>
-      <p><strong>Status:</strong> ${show.status}</p>
-      <p><strong>Rating:</strong> ${show.rating?.average || "N/A"}</p>
-      <p><strong>Runtime:</strong> ${show.runtime || "N/A"}</p>
+      <img src="${imgSrc}" alt="${show.name}">
+      <div class="episode-summary">${summaryText}</div>
+      <p><strong>Genres:</strong> ${genres}</p>
+      <p><strong>Status:</strong> ${status}</p>
+      <p><strong>Rating:</strong> ${rating}</p>
+      <p><strong>Runtime:</strong> ${runtime}</p>
     `;
-    container.appendChild(card);
+
+    
+    card.addEventListener("click", () => showEpisodesView(show.id));
+
+    showsContainer.appendChild(card);
   });
 }
+
+async function showEpisodesView(showId) {
+  const showsContainer = document.getElementById("showsContainer");
+  const episodesContainer = document.getElementById("root");
+  const backBtn = document.getElementById("backToShows");
+
+  
+  showsContainer.style.display = "none";
+  episodesContainer.style.display = "grid";
+  if (backBtn) backBtn.style.display = "inline-block";
+
+  
+  resetFilters();
+  episodesContainer.innerHTML = `<p role="status" aria-live="polite" style="font-weight:bold;">Loading episodes…</p>`;
+
+  try {
+    await loadEpisodesForShow(showId);
+  } catch (e) {
+    showError("Failed to load episodes. Please try again.");
+  }
+}
+
+function showShowsView() {
+  const showsContainer = document.getElementById("showsContainer");
+  const episodesContainer = document.getElementById("root");
+  const backBtn = document.getElementById("backToShows");
+
+  episodesContainer.style.display = "none";
+  if (backBtn) backBtn.style.display = "none";
+  showsContainer.style.display = "grid";
+
+  resetFilters();
+}
+
+
 
 function resetFilters() {
   document.getElementById("searchInput").value = "";
@@ -177,6 +232,16 @@ function showLoading() {
 }
 
 function showError(message) {
-  const container = document.getElementById("root");
-  container.innerHTML = `<p style="color: red; font-weight: bold;">${message}</p>`;
+  const shows = document.getElementById("showsContainer");
+  const episodes = document.getElementById("root");
+
+  
+  if (getComputedStyle(shows).display !== "none") {
+    shows.innerHTML = `<p role="alert" style="color:#b91c1c; font-weight:bold;">${message}</p>`;
+    return;
+  }
+
+  
+  episodes.style.display = "";
+  episodes.innerHTML = `<p role="alert" style="color:#b91c1c; font-weight:bold;">${message}</p>`;
 }

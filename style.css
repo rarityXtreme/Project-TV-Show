@@ -4,7 +4,6 @@ body {
   background-color: #f9fafb;
 }
 
-
 #controls {
   padding: 1rem 2rem;
   background-color: #fff;
@@ -15,7 +14,6 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  flex-wrap: true;
   flex-wrap: wrap;
 }
 
@@ -28,8 +26,7 @@ body {
 
 #controls select:focus,
 #controls input:focus {
-  outline: 3px solid #2563eb;
-  /* Blue focus */
+  outline: 2px solid #2563eb;
   outline-offset: 2px;
 }
 
@@ -41,7 +38,22 @@ body {
 }
 
 
-.cards-grid {
+#backToShows {
+  margin: 1rem 2rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f3f4f6;
+}
+
+#backToShows:hover {
+  background-color: #e5e7eb;
+}
+
+
+.shows-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
@@ -49,21 +61,25 @@ body {
 }
 
 @media (max-width: 900px) {
-  .cards-grid {
+  .shows-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 600px) {
-  .cards-grid {
+  .shows-grid {
     grid-template-columns: 1fr;
   }
 }
 
-#root {
-  display: none;
-}
 
+.episode-container {
+  display: none;
+  
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1rem 2rem;
+}
 
 .episode-card {
   border: 1px solid #ccc;
@@ -71,7 +87,7 @@ body {
   overflow: hidden;
   background-color: white;
   max-width: 300px;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.2s, border-color 0.2s;
 }
 
 .episode-card:hover {
@@ -81,7 +97,6 @@ body {
 
 .episode-title-bar {
   background-color: #e5e7eb;
-  /* Light grey bar */
   padding: 0.5rem 1rem;
 }
 
@@ -115,7 +130,6 @@ body {
   text-decoration: underline;
 }
 
-
 .visually-hidden {
   position: absolute !important;
   height: 1px;
@@ -124,3 +138,4 @@ body {
   clip: rect(1px, 1px, 1px, 1px);
   white-space: nowrap;
 }
+
