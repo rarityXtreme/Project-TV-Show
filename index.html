@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+  
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,19 +11,21 @@
 <body>
   <div id="controls">
     <div class="control-row">
+      <label for="showSelect" class="visually-hidden">Choose a show</label>
+      <select id="showSelect" aria-label="Choose a show">
+        <option value="" selected disabled>Select a show...</option>
+      </select>
+
       <label for="showSearchInput" class="visually-hidden">Search shows</label>
       <input type="text" id="showSearchInput" placeholder="Search shows..." aria-label="Search shows" />
 
-      <label for="showSelect" class="visually-hidden">Choose a show</label>
-      <select id="showSelect" style="display:none;"></select>
-
       <label for="episodeSelect" class="visually-hidden">Jump to episode</label>
-      <select id="episodeSelect">
+      <select id="episodeSelect" aria-label="Jump to episode">
         <option value="all">All episodes</option>
       </select>
 
       <label for="searchInput" class="visually-hidden">Search episodes</label>
-      <input type="text" id="searchInput" placeholder="Search episodes..." />
+      <input type="text" id="searchInput" placeholder="Search episodes..." aria-label="Search episodes" />
 
       <p id="matchCount" aria-live="polite"></p>
     </div>
@@ -31,14 +33,9 @@
 
   <button id="backToShows" type="button" style="display:none;">← Back to Shows</button>
 
- 
-  <h1 id="showsHeading" class="visually-hidden">Shows</h1>
-  <h1 id="episodesHeading" class="visually-hidden">Episodes</h1>
+  <div id="showsContainer" class="shows-grid" aria-live="polite"></div>
 
-  <div id="showsContainer" class="shows-grid" aria-labelledby="showsHeading" tabindex="-1" aria-live="polite"></div>
-
- 
-  <div id="root" class="episode-container" aria-labelledby="episodesHeading" tabindex="-1"></div>
+  <div id="root" class="episode-container" style="display:none;"></div>
 
   <template id="episode-card-template">
     <section class="episode-card">
@@ -51,10 +48,20 @@
     </section>
   </template>
 
+  <footer class="footer-credit">
+    Episode data provided by
+    <a href="https://www.tvmaze.com" target="_blank" rel="noopener">TVMaze.com</a>
+  </footer>
+
   <script src="script.js"></script>
 </body>
 
 </html>
+
+
+
+
+
 
 
 
